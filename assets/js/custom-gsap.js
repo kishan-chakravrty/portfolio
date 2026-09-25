@@ -22,41 +22,51 @@
 
   ////////////////////////////////////////////////////
   // 01. Smooth Scroll Js
-  function smoothSctoll() {
-    $(".smooth a").on("click", function (event) {
-      var target = $(this.getAttribute("href"));
-      if (target.length) {
-        event.preventDefault();
-        $("html, body")
-          .stop()
-          .animate(
-            {
-              scrollTop: target.offset().top - 120,
-            },
-            1500,
-          );
-      }
-    });
-  }
-  smoothSctoll();
-  if ($("#smooth-wrapper").length && $("#smooth-content").length) {
+  if (typeof gsap !== "undefined") {
     gsap.registerPlugin(
       ScrollTrigger,
       ScrollSmoother,
-      TweenMax,
       ScrollToPlugin,
+      SplitText
     );
     gsap.config({
       nullTargetWarn: false,
     });
-    let smoother = ScrollSmoother.create({
+  }
+
+  let smoother = null;
+  if ($("#smooth-wrapper").length && $("#smooth-content").length && typeof ScrollSmoother !== "undefined") {
+    smoother = ScrollSmoother.create({
       smoothTouch: 0.2,
-      smooth: 4,
+      smooth: 2,
       effects: true,
       normalizeScroll: false,
       ignoreMobileResize: true,
     });
   }
+
+  // Unified Anchor Smooth Scrolling
+  $(document).on("click", "a[href^='#']", function (event) {
+    const hash = this.getAttribute("href");
+    if (!hash || hash === "#") return;
+    const target = $(hash);
+    if (target.length) {
+      event.preventDefault();
+      const headerOffset = 100;
+      if (smoother) {
+        smoother.scrollTo(target[0], true, `top ${headerOffset}px`);
+      } else {
+        const targetTop = target.offset().top - headerOffset;
+        window.scrollTo({
+          top: Math.max(0, targetTop),
+          behavior: "smooth"
+        });
+      }
+      if (history.pushState) {
+        history.pushState(null, null, hash);
+      }
+    }
+  });
 
   ////////////////////////////////////////////////////
   // 02. Char SplitText Js
@@ -232,17 +242,19 @@
       var $this = $(btn);
       var relX = e.pageX - $this.offset().left;
       var relY = e.pageY - $this.offset().top;
-      gsap.to(target, 1, {
+      gsap.to(target, {
+        duration: 1,
         x: ((relX - $this.width() / 2) / $this.width()) * movement,
         y: ((relY - $this.height() / 2) / $this.height()) * movement,
-        ease: Power2.easeOut,
+        ease: "power2.out",
       });
     }
     $(btn).mouseleave(function (e) {
-      gsap.to(hoverBtnItem[i], 1, {
+      gsap.to(hoverBtnItem[i], {
+        duration: 1,
         x: 0,
         y: 0,
-        ease: Power2.easeOut,
+        ease: "power2.out",
       });
     });
   });
@@ -405,7 +417,7 @@
       chars,
       {
         yPercent: -10,
-        ease: "elastic",
+        ease: "elastic.out",
         stagger: 0.03,
         duration: 0.8,
       },
@@ -437,7 +449,7 @@
       chars,
       {
         yPercent: 0,
-        ease: "back",
+        ease: "back.out",
         stagger: 0.03,
         duration: 0.8,
       },
@@ -565,41 +577,42 @@
       hoverItem.children[index].style.transform = `translate(${x}px, ${y}px)`;
     }
   }
-  hoverItem.forEach((item, i) => {
+  hoverItem.forEach((item) => {
     item.addEventListener("mousemove", (e) => {
-      setInterval(moveImage(e, item, 1), 50);
+      requestAnimationFrame(() => moveImage(e, item, 1));
     });
   });
 
   ///////////////////////
   // 10. Tesimonial Two child (2) Effect
-  gsap.registerPlugin(ScrollTrigger);
-  ScrollTrigger.matchMedia({
-    // only run on 1200px and above
-    "(min-width: 1199px)": function () {
-      gsap.fromTo(
-        ".testimonial-two-main .testimonial-wrapper:nth-child(2)",
-        {
-          y: 300,
-        },
-        {
-          y: 0,
-          ease: "power9.out",
-          scrollTrigger: {
-            trigger: ".testimonial-two-main",
-            start: "top 80%",
-            end: "top 40%",
-            scrub: 5.5, // рџ‘€ add smooth transition delay
-            markers: false,
+  if (typeof ScrollTrigger !== "undefined") {
+    ScrollTrigger.matchMedia({
+      // only run on 1200px and above
+      "(min-width: 1199px)": function () {
+        gsap.fromTo(
+          ".testimonial-two-main .testimonial-wrapper:nth-child(2)",
+          {
+            y: 300,
           },
-        },
-      );
-    },
-    // below 1199px в†’ do nothing (animation OFF)
-    "(max-width: 1198px)": function () {
-      // optional cleanup if needed
-    },
-  });
+          {
+            y: 0,
+            ease: "power4.out",
+            scrollTrigger: {
+              trigger: ".testimonial-two-main",
+              start: "top 80%",
+              end: "top 40%",
+              scrub: 2, // smooth transition delay
+              markers: false,
+            },
+          },
+        );
+      },
+      // below 1199px → do nothing (animation OFF)
+      "(max-width: 1198px)": function () {
+        // optional cleanup if needed
+      },
+    });
+  }
 
   ///////////////////////
   // 10. Tesimonial Two Shape Effect
