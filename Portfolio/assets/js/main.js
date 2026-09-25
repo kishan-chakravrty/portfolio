@@ -131,6 +131,12 @@
     $(".body-overlay").removeClass("opened");
   });
 
+  $(document).on("click", ".tw-main-menu-mobile a[href^='#']", function () {
+    $(".tw-offcanvas-2-area").removeClass("opened");
+    $(".body-overlay").removeClass("opened");
+    $(".tw-text-hover-effect-word").removeClass("animated-text");
+  });
+
   ////////////////////////////////////////////////////
   // 06. Sidebar Js
   $(".tw-menu-bar").on("click", function () {
