@@ -8423,13 +8423,14 @@ body.tw-magic-cursor #magic-cursor {
   border-radius: 50%;
 }
 .banner-three-man {
-  inset-block-end: 27%;
+  inset-block-end: 8%;
 }
 @media screen and (max-width: 575px) {
   .banner-three-man {
-    inset-block-end: 38%;
+    inset-block-end: 18%;
   }
 }
+
 
 .about-area {
   background: #f4f2ee;
