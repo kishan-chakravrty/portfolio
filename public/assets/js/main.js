@@ -28,43 +28,55 @@
 
   ////////////////////////////////////////////////////
   // 01. PreLoader Js
-  document.addEventListener("DOMContentLoaded", () => {
-    // Create GSAP timeline
-    const tl = gsap.timeline();
-    const svg = document.getElementById("preloaderSvg");
-    const curve = "M0 502S175 272 500 272s500 230 500 230V0H0Z";
-    const flat = "M0 2S175 1 500 1s500 1 500 1V0H0Z";
-    // Text animation
-    tl.to(".preloader-heading .load-text, .preloader-heading .cont", {
-      delay: 1,
-      y: -80,
-      opacity: 0,
-      duration: 0.6,
-    })
-      // SVG curve animation
-      .to(svg, {
-        duration: 0.6,
-        attr: { d: curve },
-        ease: "power2.inOut",
+  const dismissPreloader = () => {
+    const preloader = document.querySelector(".preloader");
+    if (!preloader) return;
+    if (typeof gsap !== "undefined") {
+      const tl = gsap.timeline();
+      const svg = document.getElementById("preloaderSvg");
+      const curve = "M0 502S175 272 500 272s500 230 500 230V0H0Z";
+      const flat = "M0 2S175 1 500 1s500 1 500 1V0H0Z";
+      // Text animation
+      tl.to(".preloader-heading .load-text, .preloader-heading .cont", {
+        delay: 0.1,
+        y: -50,
+        opacity: 0,
+        duration: 0.3,
       })
-      // Flatten SVG
-      .to(svg, {
-        duration: 0.6,
-        attr: { d: flat },
-        ease: "power2.inOut",
-      })
-      // Slide preloader up
-      .to(".preloader", {
-        y: "-130%",
-        duration: 0.8,
-        ease: "power4.inOut",
-      })
-      // Remove from DOM flow
-      .set(".preloader", {
-        display: "none",
-        zIndex: -1,
-      });
-  });
+        // SVG curve animation
+        .to(svg, {
+          duration: 0.3,
+          attr: { d: curve },
+          ease: "power2.inOut",
+        })
+        // Flatten SVG
+        .to(svg, {
+          duration: 0.3,
+          attr: { d: flat },
+          ease: "power2.inOut",
+        })
+        // Slide preloader up
+        .to(".preloader", {
+          y: "-130%",
+          duration: 0.4,
+          ease: "power4.inOut",
+        })
+        // Remove from DOM flow
+        .set(".preloader", {
+          display: "none",
+          zIndex: -1,
+        });
+    } else {
+      preloader.style.display = "none";
+    }
+  };
+
+  if (document.readyState === "complete") {
+    dismissPreloader();
+  } else {
+    window.addEventListener("load", dismissPreloader);
+    setTimeout(dismissPreloader, 1000);
+  }
 
   ////////////////////////////////////////////////////
   // 02. Sticky Js

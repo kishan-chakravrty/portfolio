@@ -19,14 +19,17 @@ export default defineConfig({
           fs.cpSync(srcDir, destDir, { recursive: true, force: true });
         }
       },
-      transformIndexHtml(html) {
-        // Rewrite asset paths dynamically for production build mapped to /portfolio/
-        // Preserves original quotes (' or ")
-        return html.replace(
-          /(src|href|data-background-image)=(["'])(?!https?:\/\/|\/\/|\/portfolio\/)(?:(?:\.\/)?assets\/|\/assets\/)([^"']+)\2/g,
-          '$1=$2/portfolio/assets/$3$2'
-        );
-      }
+      transformIndexHtml: {
+        order: 'post',
+        handler(html) {
+          // Rewrite remaining asset paths dynamically for production build mapped to /portfolio/
+          // Preserves original quotes (' or ")
+          return html.replace(
+            /(src|href|data-background-image)=(["'])(?!https?:\/\/|\/\/|\/portfolio\/)(?:(?:\.\/)?assets\/|\/assets\/)([^"']+)\2/g,
+            '$1=$2/portfolio/assets/$3$2'
+          );
+        },
+      },
     },
   ],
 });
