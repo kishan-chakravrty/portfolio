@@ -8424,11 +8424,22 @@ body.tw-magic-cursor #magic-cursor {
 }
 .banner-three-man {
   inset-block-end: 8%;
+  z-index: 1;
+  pointer-events: none;
+}
+.banner-three-man img {
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 80%, rgba(0, 0, 0, 0) 100%);
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 80%, rgba(0, 0, 0, 0) 100%);
 }
 @media screen and (max-width: 575px) {
   .banner-three-man {
     inset-block-end: 18%;
   }
+}
+
+.banner-three-wrap {
+  position: relative;
+  z-index: 2;
 }
 
 
